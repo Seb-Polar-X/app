@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Polar X</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Polar X">
+<meta name="theme-color" content="#000000">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-512.png">
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--bg:#0c0c0c;--panel:#151515;--line:#2b2b2b;--soft:#1f1f1f;--ink:#fff;--muted:#9b9b9b;--good:#6cc496;--warn:#d9a648;--bad:#ec6a60}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;background:#000;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.4}
+header{position:sticky;top:0;z-index:5;background:#000;border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top) + 12px) 16px 10px}
+header .hrow{display:flex;justify-content:space-between;align-items:center}
+header .rf{background:none;border:1px solid var(--line);color:var(--ink);border-radius:6px;width:36px;height:32px;font-size:18px;line-height:1;padding:0}
+header .rf.spin{opacity:.4}
+header .b{font-weight:800;letter-spacing:.14em;font-size:18px}
+header .s{font-size:12px;color:var(--muted);margin-top:2px}
+body>main{background:var(--bg);min-height:100vh}
+main{padding:16px 16px calc(env(safe-area-inset-bottom) + 96px);max-width:640px;margin:0 auto}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:#000;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:6px 4px calc(env(safe-area-inset-bottom) + 6px)}
+nav button{background:none;border:0;color:var(--muted);font-weight:600;font-size:11px;font-family:inherit;padding:8px 2px;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button i{font-style:normal;font-size:20px;line-height:1;height:20px;display:flex;align-items:center;justify-content:center}
+nav button[aria-pressed="true"]{color:var(--ink)}
+h2{font-size:20px;margin:4px 0 12px}
+h3{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:20px 0 8px;font-weight:600}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px}
+.kpi.hl{background:#fff;color:#0c0c0c;border-color:#fff}
+.kpi .l{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.kpi.hl .l{color:#5e5e5e}
+.kpi .v{font-size:24px;font-weight:800;margin-top:4px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-bottom:8px}
+.card b{display:block;font-size:16px}
+.card .m{color:var(--muted);font-size:14px;margin-top:2px}
+.card a{color:var(--ink)}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin-top:6px}
+.tag.bad{color:var(--bad);border-color:var(--bad)} .tag.good{color:var(--good);border-color:var(--good)} .tag.warn{color:var(--warn);border-color:var(--warn)}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.amt{font-weight:700;font-size:17px;white-space:nowrap}
+label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;font-weight:600}
+input,select,textarea{font-size:16px!important;width:100%;background:var(--soft);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:12px;font-size:16px;font-family:inherit;-webkit-appearance:none;appearance:none}
+input[type=date]{min-height:46px}
+select{background-image:linear-gradient(45deg,transparent 50%,#9b9b9b 50%),linear-gradient(135deg,#9b9b9b 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+textarea{min-height:70px;font-family:inherit;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{background:var(--soft);color:var(--ink);border:0;padding:12px 6px;font-weight:600;font-size:14px;font-family:inherit}
+.seg button[aria-pressed="true"]{background:#fff;color:#0c0c0c}
+.btn{display:block;width:100%;background:#fff;color:#0c0c0c;border:0;border-radius:6px;padding:15px;font-weight:700;font-size:16px;font-family:inherit;margin-top:18px}
+.btn:disabled{opacity:.5}
+.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:9px 12px;font-weight:600;font-size:14px;font-family:inherit}
+.photo{border:1px dashed var(--line);border-radius:6px;padding:14px;text-align:center;color:var(--muted);font-size:14px;position:relative}
+.photo input{position:absolute;inset:0;opacity:0}
+.photo img{max-width:100%;max-height:220px;border-radius:4px;display:block;margin:0 auto 8px}
+.msg{margin-top:12px;font-size:14px;min-height:20px}
+.msg.ok{color:var(--good)} .msg.err{color:var(--bad)}
+.empty{color:var(--muted);font-size:15px;padding:8px 0}
+.small{font-size:13px;color:var(--muted)}
+.confirm{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.seg.three{grid-template-columns:1fr 1fr 1fr}.seg.three button{font-size:13px;padding:10px 4px}
+.total{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin:12px 0}
+.total .l{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}.total .v{font-size:26px;font-weight:800;margin:2px 0}
+.chips{display:flex;gap:6px;overflow-x:auto;margin:10px 0 12px;padding-bottom:2px}.chips button{flex:none;background:var(--soft);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-weight:600;font-size:13px;font-family:inherit}
+.chips button[aria-pressed="true"]{background:#fff;color:#0c0c0c;border-color:#fff}
+button.card{display:block;width:100%;text-align:left;color:var(--ink);font-family:inherit}
+.kv{display:grid;grid-template-columns:92px 1fr;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:15px}.kv:last-child{border-bottom:0}.kv .k{color:var(--muted);font-size:13px;padding-top:1px}.kv a{color:var(--ink)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.acts a{text-decoration:none;flex:1 1 0;text-align:center;min-width:0;padding:10px 4px;font-size:14px;white-space:nowrap}
+.linkbtn{background:none;border:0;color:var(--muted);font-weight:600;font-size:14px;font-family:inherit;padding:14px 0;display:block}
+.mapbar{display:grid;gap:8px;margin-bottom:10px}
+#pmap{height:calc(100vh - 290px);min-height:300px;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#1a1a1a}
+#pmap .leaflet-tile-pane{filter:invert(100%) hue-rotate(180deg) brightness(95%) contrast(85%)}
+.evpin{width:16px;height:16px;transform:rotate(45deg);border:2px solid #0c0c0c;border-radius:2px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:13px;color:var(--muted)}.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px}.legend i.d{border-radius:2px;transform:rotate(45deg)}
+.leaflet-popup-content{font:14px/1.45 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}.leaflet-popup-content a{color:#0c0c0c}
+.ghost.pop{background:#0c0c0c;color:#fff;border-color:#0c0c0c;margin-top:8px;padding:7px 10px;font-size:13px}
+.alert{border:1px solid var(--warn);border-radius:6px;padding:10px 12px;margin-bottom:12px;background:rgba(217,166,72,.08)}
+.alert .l{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--warn);font-weight:700;margin-bottom:4px}
+.ali{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);color:var(--ink);font-size:15px;font-family:inherit;padding:9px 0}.ali:first-of-type{border-top:0}.ali span{color:var(--muted);font-size:14px}
+.sheet .kv{grid-template-columns:84px 1fr}
+.crew{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--line)}.crew:last-child{border-bottom:0}.crew .tag{margin-top:4px}
+.mini{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.mini a,.mini button{padding:6px 9px;font-size:13px;text-decoration:none}
+#intro{position:fixed;inset:0;z-index:50;background:#000;display:flex;align-items:center;justify-content:center;pointer-events:none;animation:introOut .4s ease-in 1.15s forwards}
+#intro .w{color:#fff;font-weight:800;font-size:34px;letter-spacing:.22em;padding-left:.22em;opacity:0;transform:scale(.96);animation:introIn .6s ease-out .1s forwards}
+@keyframes introIn{to{opacity:1;transform:scale(1)}}
+@keyframes introOut{to{opacity:0;visibility:hidden}}
+@media (prefers-reduced-motion:reduce){#intro{display:none}}
+.lock{text-align:center;padding:60px 20px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="intro" aria-hidden="true"><div class="w">POLAR X</div></div>
+<header><div class="hrow"><div class="b">POLAR X</div><button class="rf" id="rf" type="button" aria-label="Refresh">↻</button></div><div class="s" id="sub">Loading…</div></header>
+<main id="main"></main>
+<nav id="nav" hidden>
+  <button data-t="events" aria-pressed="true"><i>◷</i>Events</button>
+  <button data-t="money"><i>£</i>Money</button>
+  <button data-t="add"><i>＋</i>Add</button>
+  <button data-t="ops"><i><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="10" cy="6.5" r="3.3"/><path d="M3.5 17.5c.6-3.6 3.3-5.6 6.5-5.6s5.9 2 6.5 5.6"/></svg></i>Operators</button>
+  <button data-t="map"><i>⌖</i>Map</button>
+</nav>
+<script>
+(function(){ var el=document.getElementById('sub'); if(el) el.textContent='Starting\u2026';
+  function show(m){ var e=document.getElementById('sub'); if(e) e.textContent='Problem: '+String(m||'unknown').slice(0,160); }
+  window.addEventListener('error',function(ev){ show(ev.message); }); window.addEventListener('unhandledrejection',function(ev){ show(ev.reason&&ev.reason.message||ev.reason); }); })();
+</script>
+<script>
+(function(){
+const S={key:'',d:null,tab:'events',photo:null,paidFrom:'business',busy:false};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const gbp=(n,dp)=>(n<0?'−':'')+'£'+Math.abs(+n||0).toLocaleString('en-GB',{minimumFractionDigits:dp?2:0,maximumFractionDigits:dp?2:0});
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const today=()=>iso(new Date());
+const day=s=>{ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}); };
+const ago=t=>{ const m=Math.round((Date.now()-new Date(t))/60000); return m<2?'just now':m<60?`${m} minutes ago`:m<1440?`${Math.round(m/60)} hour${Math.round(m/60)===1?'':'s'} ago`:`${Math.round(m/1440)} day${Math.round(m/1440)===1?'':'s'} ago`; };
+const CATS=['Client entertainment','Subsistence (meals while travelling)','Travel','Marketing','Memberships and networking','Software and subscriptions','Website','Phone and internet','Insurance','Professional fees','Bank and payment fees','Postage and printing','Stationery and office','Training','Kit and equipment','Fines and penalties','Other'];
+var BOOT=(function(){ var u='', k='';
+  try{ var h=new URLSearchParams(location.hash.slice(1)); u=h.get('u')||''; k=h.get('k')||''; }catch(e){}
+  try{ if(u&&k) localStorage.setItem('px_cfg',JSON.stringify({u:u,k:k})); else { var c=JSON.parse(localStorage.getItem('px_cfg')||'null'); if(c){ u=c.u; k=c.k; } } }catch(e){}
+  var d=null; try{ d=JSON.parse(localStorage.getItem('px_last')||'null'); }catch(e){}
+  return (u&&k) ? {u:u,k:k,cached:d} : {}; })();
+if(typeof BOOT==='undefined') var BOOT={};
+function gsr(fn,...a){ return new Promise((res,rej)=>{ const t=setTimeout(()=>rej(new Error('No answer from Google')),12000);
+  try{ google.script.run.withSuccessHandler(r=>{ clearTimeout(t); res(r); }).withFailureHandler(e=>{ clearTimeout(t); rej(e); })[fn](...a); }catch(e){ clearTimeout(t); rej(e); } }); }
+async function call(fn,...a){
+  if(BOOT.u){ try{ const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),30000); let r;
+      const q=a=>`${BOOT.u}?action=${a}&pk=${encodeURIComponent(S.key)}`;
+      if(fn==='phoneData') r=await fetch(q('pdata'),{signal:ctl.signal});
+      else r=await fetch(q(fn==='phoneAdd'?'padd':'pundo'),{method:'POST',body:JSON.stringify(fn==='phoneAdd'?a[1]:{id:a[1]}),signal:ctl.signal});
+      clearTimeout(t); if(r.ok){ const j=await r.json(); if(j && j.error!=='action') return j; } }catch(e){} }
+  return gsr(fn,...a); }
+function start(){
+  if(BOOT.k){ S.key=BOOT.k; if(BOOT.cached && BOOT.cached.ok){ S.d=BOOT.cached; $('nav').hidden=false; render(); load(true); } else load(); return; }
+  let done=false; const go=k=>{ if(done) return; done=true; try{ if(k) localStorage.setItem('pxk',k); else k=localStorage.getItem('pxk')||''; }catch(e){} S.key=k||''; load(); };
+  try{ google.script.url.getLocation(loc=>go(String(loc.hash||'').replace(/^#/,'').trim())); }catch(e){ go(''); }
+  setTimeout(()=>go(''),4000); }
+async function load(quiet){ $('rf').classList.add('spin'); if(!quiet) $('sub').textContent='Loading…';
+  try{ const r=await call('phoneData',S.key);
+    if(!r||!r.ok){ $('sub').textContent=''; $('nav').hidden=true; $('main').innerHTML='<div class="lock">This link isn’t valid. Scan the QR code in the Ledger’s Settings on your Mac, then add it to your Home Screen again.</div>'; return; }
+    S.d=r; try{ localStorage.setItem('px_last',JSON.stringify(r)); }catch(e){} $('nav').hidden=false; render(); }
+  catch(e){ if(S.d) sub(); else { $('sub').textContent=''; $('main').innerHTML=`<div class="lock">Couldn’t reach Google just now. Check your signal, then try again.<br><br><button class="ghost" id="retry">Try again</button><div class="small" style="margin-top:14px">${esc(String(e&&e.message||e||'').slice(0,140))}</div></div>`; $('retry').addEventListener('click',()=>load()); } }
+  finally{ $('rf').classList.remove('spin'); } }
+$('rf').addEventListener('click',()=>{ if(S.key) load(!!S.d); else start(); });
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && S.d && S.key){ const t=Date.now(); if(t-(load.t||0)>60000){ load.t=t; load(true); } } });
+function sub(){ const s=S.d&&S.d.snap; $('sub').textContent = s&&s.at ? `Ledger last updated ${ago(s.at)}` : 'Not updated from the Ledger yet. Open the Ledger on your Mac.'; }
+const pend = t => ((S.d&&S.d.pending)||[]).filter(p=>!t||p.type===t);
+const snap = () => (S.d&&S.d.snap)||{};
+const pref = (k,v) => { try{ if(v===undefined) return localStorage.getItem('px_'+k); localStorage.setItem('px_'+k,v); }catch(e){} return null; };
+const VIEWS = () => ({events,money,add,ops,map});
+function render(){ sub(); document.querySelectorAll('#nav button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===S.tab)); VIEWS()[S.tab](); window.scrollTo(0,0); }
+document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>{ S.tab=b.dataset.t; S.op=null; S.ev=null; S.mileage=false; render(); }));
+const SLASH = String.fromCharCode(47), WEB = 'https:'+SLASH+SLASH;
+const mapsLink = where => WEB+'maps.apple.com'+SLASH+'?q='+encodeURIComponent(where);
+const digits = n => String(n||'').replace(/[^0-9+]/g,'');
+const telLink = n => 'tel:'+digits(n);
+const gmailLink = e => 'googlegmail:'+SLASH+SLASH+SLASH+'co?to='+encodeURIComponent(String(e||'').trim());
+const waLink = n => { let d=digits(n); if(d.indexOf('+')===0) d=d.slice(1); else if(d.indexOf('0')===0) d='44'+d.slice(1); return WEB+'wa.me'+SLASH+d; };
+const addMonths = (s,n) => { const [y,m,d]=s.split('-').map(Number); return iso(new Date(y,m-1+n,d)); };
+const addDaysP = (s,n) => { const [y,m,d]=s.split('-').map(Number); return iso(new Date(y,m-1,d+n)); };
+const monthEnd = s => { const [y,m]=s.split('-').map(Number); return iso(new Date(y,m,0)); };
+const STL={active:'Active',onboarding:'Onboarding',prospect:'Prospect',paused:'Paused'}, STC={active:'good',onboarding:'warn',prospect:'',paused:'bad'};
+const STCOL={active:'#6cc496',onboarding:'#d9a648',prospect:'#9b9b9b',paused:'#ec6a60'};
+const opById = id => (snap().operators||[]).find(o=>o.id===id);
+const contactBtns = (phone,email,wa) => (phone?`<a class="ghost" target="_top" href="${telLink(phone)}">Call</a><a class="ghost" target="_top" href="sms:${esc(digits(phone))}">Text</a>${wa?`<a class="ghost" href="${waLink(phone)}" target="_blank">WhatsApp</a>`:''}`:'')+(email?`<a class="ghost" target="_top" href="${gmailLink(email)}">Email</a>`:'');
+const seg3 = (id,opts,cur) => `<div class="seg ${opts.length===3?'three':''}" id="${id}">${opts.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${v===cur}">${l}</button>`).join('')}</div>`;
+const wireSeg = (id,fn) => $(id).querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>fn(b.dataset.v)));
+const findEv = id => (snap().upcoming||[]).concat(snap().events||[]).find(e=>e.id===id);
+function teamLine(e){ const team=(e.team&&e.team.length) ? e.team.map(c=>esc(c.name)+(c.role?' <span class="small">('+esc(c.role)+')</span>':'')).join(', ') : (e.crew&&e.crew.length?esc(e.crew.join(', ')):''); return team+(e.self?(team?', ':'')+'You':''); }
+function evCard(e,opts){ opts=opts||{}; const where=[e.venue,e.postcode].filter(Boolean).join(', '), unc=(e.team||[]).filter(c=>!c.confirmed).length;
+  return `<button class="card evc" type="button" data-ev="${esc(e.id)}">${opts.date?`<div class="small" style="color:var(--ink);font-weight:700;margin-bottom:2px">${e.date===today()?'Today':day(e.date)}</div>`:''}<b>${esc(e.event)}</b><div class="m">${[e.times,e.client].filter(Boolean).map(esc).join(' · ')}</div>${where?`<div class="m">${esc(where)}</div>`:''}<div class="m">${teamLine(e)}</div>${opts.role?`<div class="m">${esc(opts.role)}</div>`:''}${e.staffed===false?'<span class="tag bad">Needs staff</span> ':''}${opts.tag!=null?opts.tag:(unc?`<span class="tag warn">${unc} not confirmed</span>`:'')}</button>`; }
+function wireEvCards(){ document.querySelectorAll('[data-ev]').forEach(b=>b.addEventListener('click',()=>{ S.tab='events'; S.ev=b.dataset.ev; S.op=null; render(); })); }
+function attention(){ const t=today(), lim=addDaysP(t,7), out=[];
+  (snap().upcoming||[]).filter(e=>e.date>=t && e.date<=lim).forEach(e=>{ const unc=(e.team||[]).filter(c=>!c.confirmed);
+    if(e.staffed===false) out.push({e,t:'Needs staff'}); if(unc.length) out.push({e,t:`${unc.map(c=>c.name).join(', ')} not confirmed yet`}); });
+  return out; }
+function events(){ const s=snap(); if(S.ev) return evDetail(S.ev);
+  const t=today(), R=S.evR||pref('evr')||'2w'; S.evR=R;
+  const up=(s.upcoming||s.events||[]).filter(e=>e.date>=t), todays=up.filter(e=>e.date===t);
+  const lim = R==='2w' ? addDaysP(t,13) : R==='3m' ? addMonths(t,3) : null;
+  const list = up.filter(e=>e.date>t && (!lim || e.date<=lim));
+  let h='';
+  const A=attention(); if(A.length) h+=`<div class="alert"><div class="l">Needs attention this week</div>${A.map(a=>`<button type="button" class="ali" data-ev="${esc(a.e.id)}"><b>${esc(a.e.event)}</b> · ${a.e.date===t?'today':day(a.e.date)}<br><span>${esc(a.t)}</span></button>`).join('')}</div>`;
+  if(todays.length){ h+='<h3>Today</h3>'; todays.forEach(e=>{ h+=sheet(e,true); }); }
+  h+=`<h3>Coming up</h3>${seg3('evR',[['2w','Next 2 weeks'],['3m','Next 3 months'],['all','All upcoming']],R)}<div style="height:6px"></div>`;
+  if(!list.length) h+=`<div class="empty">${R==='all'?'Nothing else booked yet.':'Nothing booked in this period.'}</div>`;
+  let last=''; list.forEach(e=>{ if(e.date!==last){ h+=`<div class="small" style="margin:14px 0 6px;font-weight:700;color:var(--ink)">${day(e.date)}</div>`; last=e.date; } h+=evCard(e); });
+  $('main').innerHTML=h; wireSeg('evR',v=>{ S.evR=v; pref('evr',v); events(); }); wireEvCards(); wireSheet(); }
+function sheet(e,compact){ const where=[e.venue,e.postcode].filter(Boolean).join(', '), t=today();
+  const crew=(e.team||[]).map(c=>{ const o=c.opId?opById(c.opId):null, ph=o&&o.phone; return `<div class="crew"><div><b>${esc(c.name)}</b>${c.role?` <span class="small">${esc(c.role)}</span>`:''}<div>${c.confirmed?'<span class="tag good">Confirmed</span>':'<span class="tag warn">Not confirmed</span>'}</div></div><div class="mini">${ph?`<a class="ghost" target="_top" href="${telLink(ph)}">Call</a><a class="ghost" href="${waLink(ph)}" target="_blank">WhatsApp</a>`:''}${o?`<button class="ghost" type="button" data-opgo="${esc(o.id)}">Details</button>`:''}</div></div>`; }).join('');
+  let h=`<div class="card sheet"><div class="row"><b style="font-size:18px">${esc(e.event)}</b>${e.staffed===false?'<span class="tag bad" style="margin-top:0">Needs staff</span>':''}</div>
+    <div class="m">${[e.date===t?'Today':day(e.date), e.times].filter(Boolean).map(esc).join(' · ')}</div>${e.package?`<div class="m">${esc(e.package)}</div>`:''}
+    ${where?`<div class="kv"><div class="k">Venue</div><div class="v">${esc(where)}<div class="acts" style="margin:8px 0 0"><a class="ghost" href="${mapsLink(where)}" target="_blank">Directions</a></div></div></div>`:''}
+    ${e.client||e.contactName?`<div class="kv"><div class="k">Client</div><div class="v">${esc(e.client)}${e.contactName?`<div class="small">${esc(e.contactName)}${e.contactPhone?' · '+esc(e.contactPhone):''}</div>`:''}${e.contactPhone||e.contactEmail?`<div class="acts" style="margin:8px 0 0">${contactBtns(e.contactPhone,e.contactEmail,false)}</div>`:''}</div></div>`:''}
+    ${e.dayName||e.dayPhone?`<div class="kv"><div class="k">On the day</div><div class="v">${esc(e.dayName)}${e.dayPhone?`<div class="small">${esc(e.dayPhone)}</div><div class="acts" style="margin:8px 0 0">${contactBtns(e.dayPhone,'',true)}</div>`:''}</div></div>`:''}
+    <div class="kv"><div class="k">Crew</div><div class="v">${crew||(e.self?'Just you':'<span class="small">No one booked yet</span>')}${crew&&e.self?'<div class="small" style="margin-top:6px">Plus you</div>':''}</div></div>
+    ${!compact&&e.notes?`<div class="kv"><div class="k">Notes</div><div class="v" style="white-space:pre-wrap">${esc(e.notes)}</div></div>`:''}
+    ${e.driveLink?`<div class="kv"><div class="k">Files</div><div class="v"><a href="${esc(e.driveLink)}" target="_blank">Open the Drive folder</a></div></div>`:''}
+    ${e.date<=t?`<div class="kv"><div class="k">Film</div><div class="v">${e.prints!=null?`${esc(e.prints)} prints logged`:'Not logged yet'}<div class="acts" style="margin:8px 0 0"><button class="ghost" type="button" data-film="${esc(e.id)}">${e.prints!=null?'Change':'Log film used'}</button></div></div></div>`:''}
+    ${compact?`<button class="linkbtn" type="button" data-ev="${esc(e.id)}" style="padding:10px 0 0">Everything about this event ›</button>`:''}</div>`;
+  return h; }
+function wireSheet(){ document.querySelectorAll('[data-opgo]').forEach(b=>b.addEventListener('click',()=>{ S.tab='ops'; S.op=b.dataset.opgo; S.ev=null; render(); }));
+  document.querySelectorAll('[data-film]').forEach(b=>b.addEventListener('click',()=>{ S.tab='add'; S.addM='film'; S.filmEv=b.dataset.film; S.ev=null; render(); })); }
+function evDetail(id){ const e=findEv(id); if(!e){ S.ev=null; return events(); }
+  $('main').innerHTML=`<button class="linkbtn" id="evBack" type="button" style="margin:0 0 6px">‹ All events</button>`+sheet(e,false)+(e.lat!=null?`<button class="btn" id="evMap" type="button" style="background:transparent;color:var(--ink);border:1px solid var(--line)">Show on the map</button>`:'');
+  $('evBack').addEventListener('click',()=>{ S.ev=null; events(); }); wireSheet();
+  if($('evMap')) $('evMap').addEventListener('click',()=>{ S.tab='map'; S.focus={lat:e.lat,lng:e.lng}; S.ev=null; render(); }); }
+function period(R){ const t=today(); return R==='month' ? monthEnd(t) : R==='3m' ? addMonths(t,3) : null; }
+function money(){ const s=snap(), M=S.mon||pref('mon')||'in', R=S.owedR||pref('owed')||'month'; S.mon=M; S.owedR=R; const lim=period(R);
+  let h=`<h2>Money</h2>${seg3('monM',[['in','Owed to you'],['out','Crew to pay']],M)}<div style="height:8px"></div>${seg3('owR',[['month','This month'],['3m','Next 3 months'],['all','All time']],R)}`;
+  if(M==='in'){ const all=s.owed||[], sent=new Set(pend('paid').map(p=>p.d.eventId+'|'+p.d.kind)), list=all.filter(o=>o.overdue || !lim || (o.due && o.due<=lim));
+    const tot=list.reduce((a,o)=>a+(+o.amount||0),0), over=list.filter(o=>o.overdue).reduce((a,o)=>a+(+o.amount||0),0);
+    h+=`<div class="total"><div class="l">${R==='month'?'Due to you by the end of this month':R==='3m'?'Due to you in the next 3 months':'Owed to you in total'}</div><div class="v">${gbp(tot,1)}</div><div class="small">${list.length} payment${list.length===1?'':'s'}${over?` · <span style="color:var(--bad)">${gbp(over,1)} overdue</span>`:''}</div></div>`;
+    if(!list.length) h+=`<div class="empty">${all.length?'Nothing due in this period.':'Nothing outstanding. Every invoice is paid.'}</div>`;
+    list.forEach(o=>{ const i=all.indexOf(o), done=sent.has(o.id+'|'+o.kind);
+      h+=`<div class="card"><div class="row"><div><b>${esc(o.event)}</b><div class="m">${esc(o.kind)}${o.client?' · '+esc(o.client):''}</div><div class="m">${o.due?(o.overdue?'Was due ':'Due ')+day(o.due):'No due date'}${o.toInvoice?' · not invoiced yet':''}</div>${o.overdue?'<span class="tag bad">Overdue</span>':''}${done?'<span class="tag good">Marked received · waiting for your Mac</span>':''}</div><div class="amt">${gbp(o.amount,1)}</div></div>${done?'':`<div id="cf${i}"><button class="ghost" data-i="${i}" style="margin-top:10px">Mark received</button></div>`}</div>`; });
+  } else { const all=s.crewPay; if(!all){ h+='<div class="lock">Crew payments come from the Ledger. Update the Ledger on your Mac to 1.5.2, then tap ↻.</div>'; }
+    else { const sent=new Set(pend('crewpaid').map(p=>p.d.eventId+'|'+p.d.ci)), list=all.filter(o=>o.overdue || !lim || (o.due && o.due<=lim));
+      const tot=list.reduce((a,o)=>a+(+o.amount||0),0), over=list.filter(o=>o.overdue).reduce((a,o)=>a+(+o.amount||0),0);
+      h+=`<div class="total"><div class="l">${R==='month'?'Crew to pay by the end of this month':R==='3m'?'Crew to pay in the next 3 months':'Crew to pay in total'}</div><div class="v">${gbp(tot,1)}</div><div class="small">${list.length} payment${list.length===1?'':'s'}${over?` · <span style="color:var(--bad)">${gbp(over,1)} overdue</span>`:''}</div></div>`;
+      if(!list.length) h+=`<div class="empty">${all.length?'Nothing to pay in this period.':'Every freelancer is paid.'}</div>`;
+      list.forEach(o=>{ const i=all.indexOf(o), done=sent.has(o.eventId+'|'+o.ci);
+        h+=`<div class="card"><div class="row"><div><b>${esc(o.name)}</b><div class="m">${esc(o.event)}${o.role?' · '+esc(o.role):''}</div><div class="m">${o.due?(o.overdue?'Was due ':'Pay by ')+day(o.due):''}</div>${o.overdue?'<span class="tag bad">Overdue</span>':''}${done?'<span class="tag good">Marked paid · waiting for your Mac</span>':''}</div><div class="amt">${gbp(o.amount,1)}</div></div>${done?'':`<div id="cf${i}"><button class="ghost" data-i="${i}" style="margin-top:10px">Mark paid</button></div>`}</div>`; }); } }
+  $('main').innerHTML=h;
+  wireSeg('monM',v=>{ S.mon=v; pref('mon',v); money(); }); wireSeg('owR',v=>{ S.owedR=v; pref('owed',v); money(); });
+  document.querySelectorAll('[data-i]').forEach(b=>b.addEventListener('click',()=>{ const i=+b.dataset.i; $('cf'+i).innerHTML=`<div class="confirm"><label style="margin-top:0">${M==='in'?'Received on':'Paid on'}</label><input type="date" id="pd${i}" value="${today()}"><button class="btn" id="pc${i}" style="margin-top:10px">${M==='in'?'Confirm received':'Confirm paid'}</button></div>`;
+    $('pc'+i).addEventListener('click',async()=>{ const d=$('pd'+i).value||today(); $('pc'+i).disabled=true; $('pc'+i).textContent='Saving…';
+      try{ let item; if(M==='in'){ const o=s.owed[i]; item={type:'paid',eventId:o.id,kind:o.kind,date:d,label:`${o.event} ${o.kind.toLowerCase()} ${gbp(o.amount,1)}`}; }
+        else { const o=s.crewPay[i]; item={type:'crewpaid',eventId:o.eventId,ci:o.ci,name:o.name,amount:o.amount,date:d,label:`${o.name}, ${o.event} ${gbp(o.amount,1)}`}; }
+        const r=await call('phoneAdd',S.key,item); if(!r||!r.ok) throw 0; S.d.pending.push({id:r.id,type:item.type,at:new Date().toISOString(),d:item}); money(); }
+      catch(e){ $('pc'+i).disabled=false; $('pc'+i).textContent='Couldn’t save. Try again'; } }); })); }
+function evOptions(sel){ const r=snap().recent||[]; return '<option value="">Not linked to an event</option>'+r.map(e=>`<option value="${esc(e.id)}"${e.id===sel?' selected':''}>${esc(e.event)} · ${day(e.date)}</option>`).join(''); }
+const ADDT = ['expense','mileage','lead','film'];
+function pendingList(){ const p=ADDT.reduce((a,t)=>a.concat(pend(t)),[]).sort((a,b)=>String(a.at).localeCompare(String(b.at))); if(!p.length) return '';
+  const what={expense:'Expense',mileage:'Mileage',lead:'Lead',film:'Film'};
+  return `<h3>Waiting for your Mac (${p.length})</h3><div class="small" style="margin-bottom:8px">These go into the Ledger next time it’s open.</div>`+p.slice().reverse().map(x=>`<div class="card"><div class="row"><div><b>${esc(x.d.name||x.d.label||'')}</b><div class="m">${what[x.type]||''}${x.d.date?' · '+day(x.d.date):''}${x.d.miles?` · ${x.d.miles} miles`:''}${x.d.prints!=null&&x.type==='film'?` · ${x.d.prints} prints`:''}${x.d.company?' · '+esc(x.d.company):''}${x.d.fileId?' · receipt attached':''}</div></div><div style="text-align:right">${x.d.amount&&x.type==='expense'?`<div class="amt">${gbp(x.d.amount,1)}</div>`:''}<button class="ghost" data-undo="${esc(x.id)}" style="margin-top:6px;font-size:13px;padding:6px 10px">Undo</button></div></div></div>`).join(''); }
+function wireUndo(){ document.querySelectorAll('[data-undo]').forEach(b=>b.addEventListener('click',async()=>{ b.disabled=true; b.textContent='…';
+  try{ const r=await call('phoneUndo',S.key,b.dataset.undo); if(r&&r.ok){ S.d.pending=S.d.pending.filter(p=>p.id!==b.dataset.undo); add(); } else { b.textContent='Already in the Ledger'; } }catch(e){ b.disabled=false; b.textContent='Undo'; } })); }
+function add(msg){ const M=S.addM||'expense'; S.addM=M;
+  const top=`${seg3('addM',[['expense','Expense'],['lead','Lead'],['film','Film']],M)}<div style="height:6px"></div>`;
+  ({expense:exp,lead,film})[M](top,msg); wireSeg('addM',v=>{ S.addM=v; S.mileage=false; add(); }); wireUndo(); }
+async function save(btn,msgEl,item,label,after){ btn.disabled=true; btn.textContent=label;
+  try{ const r=await call('phoneAdd',S.key,item); if(!r||!r.ok) throw 0; delete item.photo; S.d.pending.push({id:r.id,type:item.type,at:new Date().toISOString(),d:item}); after(); add('Saved. It’ll be in the Ledger next time it’s open on your Mac.'); }
+  catch(e){ btn.disabled=false; btn.textContent=btn.dataset.l; msgEl.className='msg err'; msgEl.textContent='Couldn’t save. Check your signal and try again.'; } }
+const okMsg = (id,msg) => { if(msg){ $(id).className='msg ok'; $(id).textContent=msg; } };
+function exp(top,msg){ if(S.mileage) return miles(top,msg); S.photo=null; S.paidFrom='business';
+  $('main').innerHTML=`${top}<h2>Log an expense</h2>
+    <label>Receipt</label><div class="photo" id="ph"><span id="phT">Tap to take a photo or choose one</span><input type="file" id="phI" accept="image/*"></div>
+    <label>What was it for</label><input id="x-name" placeholder="e.g. Coffee with a prospect">
+    <label>Paid to</label><input id="x-payee" placeholder="e.g. Pret, Trainline">
+    <div class="two"><div><label>Amount (£)</label><input id="x-amt" type="number" inputmode="decimal" step="0.01" min="0"></div><div><label>Date</label><input id="x-date" type="date" value="${today()}"></div></div>
+    <label>Category</label><select id="x-cat"><option value="">Choose…</option>${(snap().cats||CATS).map(c=>`<option>${esc(c)}</option>`).join('')}</select>
+    <label>Paid from</label><div class="seg" id="x-from"><button type="button" data-v="business" aria-pressed="true">Business card</button><button type="button" data-v="personal" aria-pressed="false">My own money</button></div>
+    <label>Related event (optional)</label><select id="x-ev">${evOptions()}</select>
+    <label>Notes (optional)</label><input id="x-notes">
+    <button class="btn" id="x-save" data-l="Save expense">Save expense</button><div class="msg" id="x-msg"></div>
+    <button class="linkbtn" id="toMiles" type="button">Log a car journey (mileage) instead ›</button>${pendingList()}`;
+  okMsg('x-msg',msg);
+  $('toMiles').addEventListener('click',()=>{ S.mileage=true; add(); });
+  $('x-from').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ S.paidFrom=b.dataset.v; $('x-from').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b)); }));
+  $('phI').addEventListener('change',async ev=>{ const f=ev.target.files&&ev.target.files[0]; if(!f) return; $('phT').textContent='Preparing photo…';
+    try{ S.photo=await compress(f); $('ph').innerHTML=`<img src="${S.photo}" alt="Receipt"><span class="small">Tap to change</span><input type="file" id="phI2" accept="image/*">`; $('phI2').addEventListener('change',e2=>{ $('phI').files=e2.target.files; $('phI').dispatchEvent(new Event('change')); }); }
+    catch(e){ $('phT').textContent='Couldn’t read that photo. Try another.'; } });
+  $('x-save').addEventListener('click',()=>{ const m=$('x-msg'), name=$('x-name').value.trim(), amt=parseFloat($('x-amt').value), cat=$('x-cat').value;
+    if(!name){ m.className='msg err'; m.textContent='Add what it was for.'; return; } if(!(amt>0)){ m.className='msg err'; m.textContent='Add the amount.'; return; } if(!cat){ m.className='msg err'; m.textContent='Choose a category.'; return; }
+    const hadPhoto=!!S.photo, item={type:'expense',name,payee:$('x-payee').value.trim(),amount:Math.round(amt*100)/100,date:$('x-date').value||today(),category:cat,paidBy:S.paidFrom,eventId:$('x-ev').value,notes:$('x-notes').value.trim(),photo:S.photo};
+    save($('x-save'),m,item,hadPhoto?'Uploading receipt…':'Saving…',()=>{ if(hadPhoto) item.fileId='1'; }); }); }
+function miles(top,msg){ $('main').innerHTML=`${top}<button class="linkbtn" id="toExp" type="button" style="margin:0 0 6px">‹ Back to expenses</button><h2>Log mileage</h2><div class="small">Business journeys in your own car. Polar X pays you back at HMRC’s rate: 45p a mile for the first 10,000 miles in a tax year, then 25p.</div>
+    <label>Journey</label><input id="m-name" placeholder="e.g. Manchester to Chester Racecourse and back">
+    <div class="two"><div><label>Business miles</label><input id="m-miles" type="number" inputmode="decimal" step="0.1" min="0"></div><div><label>Date</label><input id="m-date" type="date" value="${today()}"></div></div>
+    <div class="small" id="m-est" style="margin-top:8px"></div>
+    <label>Related event (optional)</label><select id="m-ev">${evOptions()}</select>
+    <label>Notes (optional)</label><input id="m-notes">
+    <button class="btn" id="m-save" data-l="Save mileage">Save mileage</button><div class="msg" id="m-msg"></div>${pendingList()}`;
+  okMsg('m-msg',msg);
+  $('toExp').addEventListener('click',()=>{ S.mileage=false; add(); });
+  $('m-miles').addEventListener('input',()=>{ const v=parseFloat($('m-miles').value); $('m-est').textContent= v>0 ? `About ${gbp(v*0.45,1)} at 45p a mile. The Ledger works out the exact amount.` : ''; });
+  $('m-save').addEventListener('click',()=>{ const m=$('m-msg'), name=$('m-name').value.trim(), mi=parseFloat($('m-miles').value);
+    if(!name){ m.className='msg err'; m.textContent='Add the journey.'; return; } if(!(mi>0)){ m.className='msg err'; m.textContent='Add the miles.'; return; }
+    save($('m-save'),m,{type:'mileage',name,miles:Math.round(mi*10)/10,date:$('m-date').value||today(),eventId:$('m-ev').value,notes:$('m-notes').value.trim()},'Saving…',()=>{}); }); }
+function lead(top,msg){ const L=snap().leads||[];
+  $('main').innerHTML=`${top}<h2>New lead</h2><div class="small">Someone you’ve just met. It goes to the Ledger’s dashboard, ready to add to HubSpot.</div>
+    <label>Name</label><input id="l-name" autocomplete="off">
+    <div class="two"><div><label>Company</label><input id="l-co"></div><div><label>Role</label><input id="l-role" placeholder="e.g. Events manager"></div></div>
+    <label>Email</label><input id="l-email" type="email" inputmode="email" autocomplete="off">
+    <label>Phone</label><input id="l-phone" type="tel" autocomplete="off">
+    <label>Where you met</label><input id="l-met" placeholder="e.g. Manchester PA Network" value="${esc(pref('lastmet')||'')}">
+    <label>Notes</label><textarea id="l-notes" placeholder="What they’re planning, what you talked about"></textarea>
+    <label>Follow up by (optional)</label><input id="l-follow" type="date">
+    <button class="btn" id="l-save" data-l="Save lead">Save lead</button><div class="msg" id="l-msg"></div>
+    ${L.length?`<h3>In the Ledger, not in HubSpot yet (${L.length})</h3><div class="card">${L.map(l=>`<div class="m" style="color:var(--ink)">${esc(l.name)}${l.company?' <span class="small">· '+esc(l.company)+'</span>':''}</div>`).join('')}</div>`:''}${pendingList()}`;
+  okMsg('l-msg',msg);
+  $('l-save').addEventListener('click',()=>{ const m=$('l-msg'), name=$('l-name').value.trim(); if(!name){ m.className='msg err'; m.textContent='Add their name.'; return; }
+    const met=$('l-met').value.trim(); pref('lastmet',met);
+    save($('l-save'),m,{type:'lead',name,company:$('l-co').value.trim(),role:$('l-role').value.trim(),email:$('l-email').value.trim(),phone:$('l-phone').value.trim(),met,notes:$('l-notes').value.trim(),follow:$('l-follow').value,date:today()},'Saving…',()=>{}); }); }
+function film(top,msg){ const t=today(), R=(snap().recent||[]).filter(e=>e.date<=t), st=snap().filmStock||{}, sel=S.filmEv||(R.find(e=>e.prints==null)||R[0]||{}).id||'';
+  const cur=R.find(e=>e.id===sel)||{}, TL={black:'Black',white:'White',other:'Other'};
+  $('main').innerHTML=`${top}<h2>Film used</h2><div class="small">Prints used at an event, including spoils. Your stock and film costs update in the Ledger.</div>
+    ${Object.keys(st).length?`<div class="total" style="padding:10px 14px"><div class="l">In stock now</div><div style="font-weight:700;margin-top:4px">${Object.keys(TL).map(k=>`${TL[k]} ${st[k]!=null?Number(st[k]).toLocaleString('en-GB'):0}`).join(' · ')}</div></div>`:''}
+    <label>Event</label><select id="f-ev">${R.length?R.map(e=>`<option value="${esc(e.id)}"${e.id===sel?' selected':''}>${esc(e.event)} · ${day(e.date)}${e.prints!=null?` · ${e.prints} logged`:''}</option>`).join(''):'<option value="">No recent events</option>'}</select>
+    <div class="two"><div><label>Prints used</label><input id="f-prints" type="number" inputmode="numeric" step="1" min="0" value="${cur.prints!=null?esc(cur.prints):''}"></div><div><label>Film type</label><select id="f-type">${Object.keys(TL).map(k=>`<option value="${k}"${k===(cur.filmType||'black')?' selected':''}>${TL[k]}</option>`).join('')}</select></div></div>
+    <button class="btn" id="f-save" data-l="Save film used">Save film used</button><div class="msg" id="f-msg"></div>${pendingList()}`;
+  okMsg('f-msg',msg);
+  $('f-ev').addEventListener('change',()=>{ S.filmEv=$('f-ev').value; add(); });
+  $('f-save').addEventListener('click',()=>{ const m=$('f-msg'), id=$('f-ev').value, q=parseInt($('f-prints').value,10), e=R.find(x=>x.id===id);
+    if(!id){ m.className='msg err'; m.textContent='Choose the event.'; return; } if(!(q>=0)){ m.className='msg err'; m.textContent='Add the number of prints.'; return; }
+    save($('f-save'),m,{type:'film',eventId:id,prints:q,filmType:$('f-type').value,name:'Film: '+(e?e.event:''),date:e?e.date:today()},'Saving…',()=>{ S.filmEv=null; }); }); }
+function compress(file){ return new Promise((res,rej)=>{ const img=new Image(), u=URL.createObjectURL(file); img.onload=()=>{ const mx=1600, sc=Math.min(1,mx/Math.max(img.width,img.height)), c=document.createElement('canvas'); c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc); c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(u); res(c.toDataURL('image/jpeg',0.78)); }; img.onerror=()=>{ URL.revokeObjectURL(u); rej(); }; img.src=u; }); }
+function opJobs(o){ const n=String(o.name||'').toLowerCase(); return (snap().upcoming||[]).map(e=>{ const c=(e.team||[]).find(c=>c.opId===o.id || String(c.name).toLowerCase()===n); return c?{e,c}:null; }).filter(Boolean); }
+function needSnap(){ $('main').innerHTML='<div class="lock">Operator and map details come from the Ledger. Open the Ledger on your Mac (version 1.5.1 or later) and click Sync now under Phone companion in Settings, then tap ↻ here.</div>'; }
+function ops(){ const s=snap(); if(!s.operators) return needSnap(); if(S.op) return opDetail(S.op);
+  const q=(S.opQ||'').toLowerCase(), F=S.opF||'all', order=['active','onboarding','prospect','paused'];
+  const L=s.operators.filter(o=>(F==='all'||o.status===F) && (!q || [o.name,o.town,o.postcode,(o.roles||[]).join(' ')].join(' ').toLowerCase().indexOf(q)>=0)).sort((a,b)=>order.indexOf(a.status)-order.indexOf(b.status)||a.name.localeCompare(b.name));
+  const cnt=k=>s.operators.filter(o=>o.status===k).length;
+  let h=`<h2>Operators</h2><input id="opQ" type="search" placeholder="Search by name, town or role" value="${esc(S.opQ||'')}"><div class="chips" id="opF">${['all'].concat(order).filter(k=>k==='all'||cnt(k)).map(k=>`<button type="button" data-v="${k}" aria-pressed="${F===k}">${k==='all'?'All '+s.operators.length:STL[k]+' '+cnt(k)}</button>`).join('')}</div>`;
+  if(!L.length) h+='<div class="empty">No operators match.</div>';
+  L.forEach(o=>{ const nx=opJobs(o)[0];
+    h+=`<button class="card opr" data-op="${esc(o.id)}" type="button"><div class="row"><div><b>${esc(o.name)}</b><div class="m">${esc((o.roles||[]).join(', ')||'No role set')}${o.town?' · '+esc(o.town):''}</div><div class="m">${nx?'Next: '+esc(nx.e.event)+', '+day(nx.e.date):o.worked?`${o.worked} event${o.worked===1?'':'s'} worked`:'No events yet'}</div></div><span class="tag ${STC[o.status]||''}" style="margin-top:0">${STL[o.status]||o.status}</span></div></button>`; });
+  $('main').innerHTML=h;
+  $('opQ').addEventListener('input',()=>{ S.opQ=$('opQ').value; const p=$('opQ').selectionStart; ops(); const el=$('opQ'); el.focus(); try{ el.setSelectionRange(p,p); }catch(e){} });
+  $('opF').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ S.opF=b.dataset.v; ops(); }));
+  document.querySelectorAll('[data-op]').forEach(b=>b.addEventListener('click',()=>{ S.op=b.dataset.op; ops(); window.scrollTo(0,0); })); }
+function opDetail(id){ const s=snap(), o=(s.operators||[]).find(x=>x.id===id); if(!o){ S.op=null; return ops(); }
+  const J=opJobs(o), rates=[o.rateDay!=null?gbp(o.rateDay)+' a day':'', o.rateHalf!=null?gbp(o.rateHalf)+' half day':'', o.rateHour!=null?gbp(o.rateHour)+' an hour':''].filter(Boolean);
+  const row=(l,v)=>v?`<div class="kv"><div class="k">${l}</div><div class="v">${v}</div></div>`:'';
+  let h=`<button class="linkbtn" id="opBack" type="button" style="margin:0 0 6px">‹ All operators</button><div class="row" style="align-items:center"><h2 style="margin:4px 0">${esc(o.name)}</h2><span class="tag ${STC[o.status]||''}" style="margin-top:0">${STL[o.status]||o.status}</span></div><div class="m small">${esc((o.roles||[]).join(', ')||'No role set')}</div>
+    <div class="acts">${o.phone?`<a class="ghost" target="_top" href="${telLink(o.phone)}">Call</a><a class="ghost" target="_top" href="sms:${esc(String(o.phone).replace(/[^0-9+]/g,''))}">Text</a><a class="ghost" href="${waLink(o.phone)}" target="_blank">WhatsApp</a>`:''}${o.email?`<a class="ghost" target="_top" href="${gmailLink(o.email)}">Email</a>`:''}</div>
+    <div class="card">${row('Phone',o.phone?`<a target="_top" href="${telLink(o.phone)}">${esc(o.phone)}</a>`:'')}${row('Email',o.email?`<a target="_top" href="${gmailLink(o.email)}">${esc(o.email)}</a>`:'')}${row('Home',esc([o.town,o.postcode].filter(Boolean).join(', ')))}${row('Travels',o.travel?`Up to ${esc(o.travel)} miles`:'')}${row('Rates',esc(rates.join(' · ')))}${row('Dietary',esc(o.dietary))}${row('Emergency',o.emergencyName?esc(o.emergencyName)+(o.emergencyPhone?` · <a target="_top" href="${telLink(o.emergencyPhone)}">${esc(o.emergencyPhone)}</a>`:''):'')}${o.steps<o.stepsOf?row('Onboarding',`${o.steps} of ${o.stepsOf} steps done`):''}${row('History',o.worked?`${o.worked} event${o.worked===1?'':'s'} worked${o.lastJob?', last on '+day(o.lastJob):''}`:'No events worked yet')}</div>`;
+  if((o.away||[]).length) h+=`<h3>Unavailable</h3><div class="card">${o.away.map(a=>`<div class="m" style="color:var(--ink)">${day(a.from)}${a.to&&a.to!==a.from?' to '+day(a.to):''}</div>`).join('')}</div>`;
+  h+=`<h3>Upcoming events (${J.length})</h3>`;
+  if(!J.length) h+='<div class="empty">Nothing booked.</div>';
+  J.forEach(j=>{ h+=evCard(j.e,{date:true,role:j.c.role?'Role: '+j.c.role:'',tag:j.c.confirmed?'<span class="tag good">Confirmed</span>':'<span class="tag warn">Not confirmed yet</span>'}); });
+  if(o.lat!=null) h+=`<button class="btn" id="opMap" type="button" style="background:transparent;color:var(--ink);border:1px solid var(--line)">Show on the map</button>`;
+  $('main').innerHTML=h;
+  $('opBack').addEventListener('click',()=>{ S.op=null; ops(); }); wireEvCards();
+  if($('opMap')) $('opMap').addEventListener('click',()=>{ S.tab='map'; S.focus={lat:o.lat,lng:o.lng}; S.op=null; render(); }); }
+let LEAF=null;
+function loadLeaflet(){ if(window.L && window.L.map) return Promise.resolve(); if(LEAF) return LEAF;
+  const base=WEB+'cdnjs.cloudflare.com'+SLASH+'ajax'+SLASH+'libs'+SLASH+'leaflet'+SLASH+'1.9.4'+SLASH;
+  LEAF=new Promise((res,rej)=>{ const c=document.createElement('link'); c.rel='stylesheet'; c.href=base+'leaflet.min.css'; document.head.appendChild(c);
+    const sc=document.createElement('script'); sc.src=base+'leaflet.min.js'; sc.onload=()=>res(); sc.onerror=()=>{ LEAF=null; rej(new Error('map')); }; document.head.appendChild(sc); });
+  return LEAF; }
+function map(){ const s=snap(); if(!s.operators) return needSnap();
+  const show=S.mShow||pref('mshow')||'both', when=S.mWhen||pref('mwhen')||'up'; S.mShow=show; S.mWhen=when;
+  $('main').innerHTML=`<div class="mapbar"><div class="seg three" id="mS"><button type="button" data-v="both">Both</button><button type="button" data-v="ops">Operators</button><button type="button" data-v="ev">Events</button></div>
+    <div class="seg three" id="mW" ${show==='ops'?'hidden':''}><button type="button" data-v="up">Upcoming</button><button type="button" data-v="past">Past</button><button type="button" data-v="all">All</button></div></div>
+    <div id="pmap"><div class="lock" style="padding:40px 10px">Loading the map…</div></div><div class="legend" id="mLeg"></div><div id="mInfo"></div>`;
+  $('mS').querySelectorAll('button').forEach(b=>{ b.setAttribute('aria-pressed',b.dataset.v===show); b.addEventListener('click',()=>{ S.mShow=b.dataset.v; pref('mshow',b.dataset.v); map(); }); });
+  $('mW').querySelectorAll('button').forEach(b=>{ b.setAttribute('aria-pressed',b.dataset.v===when); b.addEventListener('click',()=>{ S.mWhen=b.dataset.v; pref('mwhen',b.dataset.v); map(); }); });
+  const t=today(), opsL=show==='ev'?[]:(s.operators||[]).filter(o=>o.lat!=null);
+  const evs=show==='ops'?[]:[].concat(when==='past'?[]:(s.upcoming||[]), when==='up'?[]:(s.past||[])).filter(e=>e.lat!=null);
+  const noGeo=(show==='ev'?0:(s.operators||[]).filter(o=>o.lat==null).length)+(show==='ops'?0:[].concat(when==='past'?[]:(s.upcoming||[])).filter(e=>e.lat==null).length);
+  $('mLeg').innerHTML=(show!=='ev'?Object.keys(STL).map(k=>`<span><i style="background:${STCOL[k]}"></i>${STL[k]}</span>`).join(''):'')+(show!=='ops'?`<span><i class="d" style="background:#4aa3ff"></i>${when==='past'?'Past event':when==='up'?'Upcoming event':'Upcoming event'}</span>${when==='all'?'<span><i class="d" style="background:#777"></i>Past event</span>':''}`:'')+(noGeo?`<div class="small" style="width:100%;margin-top:4px">${noGeo} not shown: no postcode in the Ledger yet.</div>`:'');
+  loadLeaflet().then(()=>{ if(S.tab!=='map') return; const L=window.L; $('pmap').innerHTML='';
+    const m=L.map('pmap',{zoomControl:true,attributionControl:true,tap:true}); S.lmap=m;
+    L.tileLayer(WEB+'{s}.tile.openstreetmap.org'+SLASH+'{z}'+SLASH+'{x}'+SLASH+'{y}.png',{maxZoom:18,attribution:'© OpenStreetMap contributors'}).addTo(m);
+    const pts=[];
+    opsL.forEach(o=>{ const mk=L.circleMarker([o.lat,o.lng],{radius:9,color:'#0c0c0c',weight:2,fillColor:STCOL[o.status]||'#9b9b9b',fillOpacity:1}).addTo(m); pts.push([o.lat,o.lng]);
+      mk.bindPopup(`<b>${esc(o.name)}</b><br>${esc((o.roles||[]).join(', '))}${o.town?'<br>'+esc(o.town):''}${o.travel?'<br>Travels up to '+esc(o.travel)+' miles':''}<br><button class="ghost pop" data-opn="${esc(o.id)}" type="button">View details</button>`); });
+    evs.forEach(e=>{ const up=e.date>=t, ic=L.divIcon({className:'',html:`<div class="evpin" style="background:${up?'#4aa3ff':'#777'}"></div>`,iconSize:[18,18],iconAnchor:[9,9]});
+      const mk=L.marker([e.lat,e.lng],{icon:ic,zIndexOffset:up?500:0}).addTo(m); pts.push([e.lat,e.lng]);
+      const where=[e.venue,e.postcode].filter(Boolean).join(', ');
+      mk.bindPopup(`<b>${esc(e.event)}</b><br>${day(e.date)}${e.times?' · '+esc(e.times):''}${e.client?'<br>'+esc(e.client):''}${where?`<br><a href="${mapsLink(where)}" target="_blank">${esc(where)}</a>`:''}${e.crew&&e.crew.length?'<br>'+esc(e.crew.join(', ')):''}${e.staffed===false?'<br><span style="color:#ec6a60">Needs staff</span>':''}${up?`<br><button class="ghost pop" data-evn="${esc(e.id)}" type="button">Event details</button>`:''}`); });
+    m.on('popupopen',ev=>{ const el=ev.popup.getElement(), b=el.querySelector('[data-opn]'), v=el.querySelector('[data-evn]'); if(b) b.addEventListener('click',()=>{ S.tab='ops'; S.op=b.dataset.opn; render(); }); if(v) v.addEventListener('click',()=>{ S.tab='events'; S.ev=v.dataset.evn; render(); }); });
+    if(S.focus){ m.setView([S.focus.lat,S.focus.lng],11); S.focus=null; }
+    else if(pts.length===1) m.setView(pts[0],11);
+    else if(pts.length) m.fitBounds(pts,{padding:[30,30],maxZoom:12});
+    else m.setView([54.3,-2.6],5);
+    setTimeout(()=>m.invalidateSize(),50);
+  }).catch(()=>{ $('pmap').innerHTML='<div class="lock" style="padding:40px 10px">The map couldn’t load. Check your signal and try again.</div>'; }); }
+start();
+start();
+})();
+</script>
+</body>
+</html>
