@@ -93,6 +93,7 @@ button.card{display:block;width:100%;text-align:left;color:var(--ink);font-famil
 @keyframes introIn{to{opacity:1;transform:scale(1)}}
 @keyframes introOut{to{opacity:0;visibility:hidden}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
+.qrbox{background:#fff;border-radius:8px;padding:12px;margin-top:10px;text-align:center}.qrbox svg{width:100%;max-width:260px;height:auto;display:block;margin:0 auto}
 .lock{text-align:center;padding:60px 20px;color:var(--muted)}
 </style>
 </head>
@@ -214,10 +215,17 @@ function sheet(e,compact){ const where=[e.venue,e.postcode].filter(Boolean).join
     <div class="kv"><div class="k">Crew</div><div class="v">${crew||(e.self?'Just you':'<span class="small">No one booked yet</span>')}${crew&&e.self?'<div class="small" style="margin-top:6px">Plus you</div>':''}</div></div>
     ${!compact&&e.notes?`<div class="kv"><div class="k">Notes</div><div class="v" style="white-space:pre-wrap">${esc(e.notes)}</div></div>`:''}
     ${e.driveLink?`<div class="kv"><div class="k">Files</div><div class="v"><a href="${esc(e.driveLink)}" target="_blank">Open the Drive folder</a></div></div>`:''}
+    ${e.releaseLink?`<div class="kv"><div class="k">Releases</div><div class="v">${e.releases?`${esc(e.releases)} signed`:'None signed yet'}<div class="acts" style="margin:8px 0 0"><a class="ghost" href="${esc(e.releaseLink)}" target="_blank">Open the form</a><button class="ghost" type="button" data-qr="${esc(e.id)}">Show QR code</button></div><div class="qrbox" id="qr-${esc(e.id)}" hidden></div></div></div>`:''}
     ${e.date<=t?`<div class="kv"><div class="k">Film</div><div class="v">${e.prints!=null?`${esc(e.prints)} prints logged`:'Not logged yet'}<div class="acts" style="margin:8px 0 0"><button class="ghost" type="button" data-film="${esc(e.id)}">${e.prints!=null?'Change':'Log film used'}</button></div></div></div>`:''}
     ${compact?`<button class="linkbtn" type="button" data-ev="${esc(e.id)}" style="padding:10px 0 0">Everything about this event ›</button>`:''}</div>`;
   return h; }
-function wireSheet(){ document.querySelectorAll('[data-opgo]').forEach(b=>b.addEventListener('click',()=>{ S.tab='ops'; S.op=b.dataset.opgo; S.ev=null; render(); }));
+let QRL=null;
+function loadQr(){ if(window.qrcode) return Promise.resolve(); if(QRL) return QRL; QRL=new Promise((res,rej)=>{ const sc=document.createElement('script'); sc.src=WEB+'cdnjs.cloudflare.com'+SLASH+'ajax'+SLASH+'libs'+SLASH+'qrcode-generator'+SLASH+'1.4.4'+SLASH+'qrcode.min.js'; sc.onload=()=>res(); sc.onerror=()=>{ QRL=null; rej(); }; document.head.appendChild(sc); }); return QRL; }
+function wireSheet(){ document.querySelectorAll('[data-qr]').forEach(b=>b.addEventListener('click',async()=>{ const id=b.dataset.qr, e=findEv(id), box=$('qr-'+id); if(!e||!box) return;
+    if(!box.hidden){ box.hidden=true; b.textContent='Show QR code'; return; } box.hidden=false; box.innerHTML='<div class="small">Loading…</div>';
+    try{ await loadQr(); const q=window.qrcode(0,'M'); q.addData(e.releaseLink); q.make(); box.innerHTML=q.createSvgTag({cellSize:6,margin:3,scalable:true})+'<div class="small" style="color:#333;margin-top:6px">Ask them to scan this with their phone camera.</div>'; b.textContent='Hide QR code'; }
+    catch(err){ box.innerHTML='<div class="small">Couldn’t load the QR code. Use “Open the form” and hand them your phone.</div>'; } }));
+  document.querySelectorAll('[data-opgo]').forEach(b=>b.addEventListener('click',()=>{ S.tab='ops'; S.op=b.dataset.opgo; S.ev=null; render(); }));
   document.querySelectorAll('[data-film]').forEach(b=>b.addEventListener('click',()=>{ S.tab='add'; S.addM='film'; S.filmEv=b.dataset.film; S.ev=null; render(); })); }
 function evDetail(id){ const e=findEv(id); if(!e){ S.ev=null; return events(); }
   $('main').innerHTML=`<button class="linkbtn" id="evBack" type="button" style="margin:0 0 6px">‹ All events</button>`+sheet(e,false)+(e.lat!=null?`<button class="btn" id="evMap" type="button" style="background:transparent;color:var(--ink);border:1px solid var(--line)">Show on the map</button>`:'');
