@@ -13,7 +13,6 @@
 <meta name="referrer" content="no-referrer">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
-<link rel="manifest" href="manifest.json">
 <style>
 :root{--bg:#0c0c0c;--panel:#151515;--line:#2b2b2b;--soft:#1f1f1f;--ink:#fff;--muted:#9b9b9b;--good:#6cc496;--warn:#d9a648;--bad:#ec6a60}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -130,7 +129,7 @@ var BOOT=(function(){ var u='', k='';
   var d=null; try{ d=JSON.parse(localStorage.getItem('px_last')||'null'); }catch(e){}
   return (u&&k) ? {u:u,k:k,cached:d} : {}; })();
 if(typeof BOOT==='undefined') var BOOT={};
-function gsr(fn,...a){ return new Promise((res,rej)=>{ const t=setTimeout(()=>rej(new Error('No answer from Google')),12000);
+function gsr(fn,...a){ if(typeof google==='undefined' || !google.script) return Promise.reject(new Error('Couldn’t reach your Google script.')); return new Promise((res,rej)=>{ const t=setTimeout(()=>rej(new Error('No answer from Google')),12000);
   try{ google.script.run.withSuccessHandler(r=>{ clearTimeout(t); res(r); }).withFailureHandler(e=>{ clearTimeout(t); rej(e); })[fn](...a); }catch(e){ clearTimeout(t); rej(e); } }); }
 async function call(fn,...a){
   if(BOOT.u){ try{ const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),30000); let r;
@@ -139,14 +138,24 @@ async function call(fn,...a){
       else r=await fetch(q(fn==='phoneAdd'?'padd':'pundo'),{method:'POST',body:JSON.stringify(fn==='phoneAdd'?a[1]:{id:a[1]}),signal:ctl.signal});
       clearTimeout(t); if(r.ok){ const j=await r.json(); if(j && j.error!=='action') return j; } }catch(e){} }
   return gsr(fn,...a); }
+function setup(msg){ $('nav').hidden=true; $('sub').textContent='One-off setup';
+  $('main').innerHTML=`<h2>Connect to your Ledger</h2><div class="small">In the Ledger on your Mac, go to Settings, Phone companion, and click “Copy the link”. Send it to yourself, copy it on your phone, then paste it here. You only need to do this once.</div>
+    <label>Your phone link</label><textarea id="su-link" placeholder="Paste the link here" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+    <button class="btn" id="su-go" type="button">Connect</button><div class="msg ${msg?'err':''}" id="su-msg">${msg||''}</div>`;
+  $('su-go').addEventListener('click',()=>{ const v=$('su-link').value.trim(); let u='', k='';
+    try{ const h=new URLSearchParams(v.slice(v.indexOf('#')+1)); u=h.get('u')||''; k=h.get('k')||''; }catch(e){}
+    if(!u||!k){ $('su-msg').className='msg err'; $('su-msg').textContent='That doesn’t look like the phone link. Copy it again from the Ledger’s Settings.'; return; }
+    try{ localStorage.setItem('px_cfg',JSON.stringify({u:u,k:k})); }catch(e){}
+    BOOT.u=u; BOOT.k=k; S.key=k; load(); }); }
 function start(){
+  if(!BOOT.k) return setup();
   if(BOOT.k){ S.key=BOOT.k; if(BOOT.cached && BOOT.cached.ok){ S.d=BOOT.cached; $('nav').hidden=false; render(); load(true); } else load(); return; }
   let done=false; const go=k=>{ if(done) return; done=true; try{ if(k) localStorage.setItem('pxk',k); else k=localStorage.getItem('pxk')||''; }catch(e){} S.key=k||''; load(); };
   try{ google.script.url.getLocation(loc=>go(String(loc.hash||'').replace(/^#/,'').trim())); }catch(e){ go(''); }
   setTimeout(()=>go(''),4000); }
 async function load(quiet){ $('rf').classList.add('spin'); if(!quiet) $('sub').textContent='Loading…';
   try{ const r=await call('phoneData',S.key);
-    if(!r||!r.ok){ $('sub').textContent=''; $('nav').hidden=true; $('main').innerHTML='<div class="lock">This link isn’t valid. Scan the QR code in the Ledger’s Settings on your Mac, then add it to your Home Screen again.</div>'; return; }
+    if(!r||!r.ok){ try{ localStorage.removeItem('px_cfg'); localStorage.removeItem('px_last'); }catch(e){} S.d=null; return setup('That link didn’t work. Copy it again from the Ledger’s Settings.'); }
     S.d=r; try{ localStorage.setItem('px_last',JSON.stringify(r)); }catch(e){} $('nav').hidden=false; render(); }
   catch(e){ if(S.d) sub(); else { $('sub').textContent=''; $('main').innerHTML=`<div class="lock">Couldn’t reach Google just now. Check your signal, then try again.<br><br><button class="ghost" id="retry">Try again</button><div class="small" style="margin-top:14px">${esc(String(e&&e.message||e||'').slice(0,140))}</div></div>`; $('retry').addEventListener('click',()=>load()); } }
   finally{ $('rf').classList.remove('spin'); } }
